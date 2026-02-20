@@ -817,6 +817,7 @@ Follow all requirements from spec.md exactly.
 
 ---
 
+> Note
 Apply Two fixes:
 
 1. Watcher: Switched from Observer (inotify) to PollingObserver - fixes WSL2 file detection
