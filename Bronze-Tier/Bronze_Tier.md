@@ -817,6 +817,11 @@ Follow all requirements from spec.md exactly.
 
 ---
 
+Apply Two fixes:
+
+1. Watcher: Switched from Observer (inotify) to PollingObserver - fixes WSL2 file detection
+2. Orchestrator: Removed CLAUDECODE env var before subprocess call - fixes nested session error
+
 ### PROMPT 5 — Verify, Run and Test
 
 **What this prompt does:**
