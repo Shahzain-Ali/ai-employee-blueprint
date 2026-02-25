@@ -759,15 +759,16 @@ Inbox/ folder      ─→ FileWatcher ─────→ Needs_Action/FILE_*.md 
 ## SECTION 11: HOW IT WORKS — SPECKIT PLUS WORKFLOW
 
 > **The Most Important Thing to Understand:**
-> Tum code nahi likhte. Tum sirf Claude Code ko **prompts** dete ho.
+> Aap code nahi likhte. Aap sirf Claude Code ko **prompts** dete hain.
 > Claude sab kuch karta hai — specs banata hai, plan banata hai, code likhta hai,
-> tests run karta hai. Tum sirf direction dete ho aur approve karte ho.
+> tests run karta hai. Aap sirf direction dete hain aur approve karte hain.
 
 ### The SpecKit Plus Framework (Same as Bronze)
 
 Silver Tier follows the **exact same SpecKit Plus workflow** as Bronze:
 
 ```
+Step 0 → ANALYZE      → Claude reads official docs + Bronze architecture (MUST DO FIRST)
 Step 1 → /sp.specify  → Claude generates specification (spec.md)
 Step 2 → /sp.plan     → Claude generates architecture plan (plan.md)
 Step 3 → /sp.tasks    → Claude generates testable tasks (tasks.md)
@@ -783,6 +784,70 @@ Manual → MCP Config   → You configure .mcp.json (one time)
 > Bronze mein yahi kiya tha, Silver mein bhi yahi karein ge.
 > Sirf content alag hai — ab Gmail, WhatsApp, MCP ke baare mein.
 > Manual steps sirf credentials aur login ke liye hain — code nahi likhna.
+
+---
+
+## SECTION 12: THE PROMPTS THAT BUILD SILVER TIER
+
+### PROMPT 0 — Analyze Sources & Understand Context (MUST DO FIRST)
+
+**Why this prompt is critical:**
+Silver Tier Bronze ke upar build hota hai. Agar Claude ko Bronze ka architecture,
+Hackathon-0 ke official requirements, aur existing codebase ki samajh nahi hogi —
+toh specification galat banay ga. Yeh prompt Claude ko sab kuch padhne aur samajhne
+ka mauka deta hai PEHLE spec banaye.
+
+**Sources that Claude must analyze:**
+
+| Source | Path | What It Contains |
+|--------|------|-----------------|
+| Official Hackathon Documentation | `Personal-AI-Employee-Hackathon-0-Building-Autonomous-FTEs-in-2026.pdf` | Silver Tier requirements (Page 4) |
+| Bronze Tier Spec | `specs/001-bronze-fte-foundation/spec.md` | Bronze requirements, success criteria |
+| Bronze Tier Plan | `specs/001-bronze-fte-foundation/plan.md` | Architecture decisions, tech stack |
+| Bronze Tier Tasks | `specs/001-bronze-fte-foundation/tasks.md` | Implementation details |
+| Existing Codebase | `src/`, `AI_Employee_Vault/`, `.claude/skills/` | What's already built |
+| Bronze Tier Documentation | `Bronze_Tier.md` | Complete Bronze theory + implementation |
+
+```
+Go through the following sources carefully and analyze what Silver Tier requires:
+
+1. Official Hackathon-0 documentation:
+   @Personal-AI-Employee-Hackathon-0-Building-Autonomous-FTEs-in-2026.pdf
+   Focus on Silver Tier requirements (Page 4) — what exactly needs to be built.
+
+2. Bronze Tier implementation (already working):
+   - Read specs/001-bronze-fte-foundation/spec.md (what Bronze built)
+   - Read specs/001-bronze-fte-foundation/plan.md (architecture decisions)
+   - Check existing code: src/, AI_Employee_Vault/, .claude/skills/
+   - Read Bronze_Tier.md for full architecture understanding
+
+3. System prerequisites check:
+   - Verify Python, Node.js, uv, PM2 versions
+   - Check if Gmail API and Playwright are available
+   - Verify Bronze Tier is fully working (pm2 status)
+
+4. Report back:
+   - What Silver Tier officially requires (from PDF)
+   - What Bronze already provides (foundation)
+   - What new components need to be built
+   - Any system prerequisites missing
+   - Recommended implementation order
+
+Do NOT generate any specs yet — just analyze and report.
+```
+
+**What Claude does after this prompt:**
+- Reads the official PDF documentation (Silver Tier section)
+- Reads all Bronze Tier specs, plans, and existing code
+- Checks system prerequisites (`python3 --version`, `node --version`, etc.)
+- Reports a complete analysis: what exists, what's needed, what's missing
+- Aap review karein aur confirm karein to proceed
+
+> **Roman Urdu Note:**
+> Yeh sabse important step hai. Jaise koi naya employee hire ho toh pehle usko
+> company ki documentation padhao, existing system samjhao, phir kaam do.
+> Claude ko bhi pehle sab sources padhne do — phir spec banaye ga.
+> Bina yeh step ke direct `/sp.specify` dena = bina naqsha safar karna.
 
 ---
 
