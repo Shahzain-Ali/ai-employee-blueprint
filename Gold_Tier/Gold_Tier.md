@@ -15,26 +15,24 @@
 | 1 | Introduction — What Gold Tier Adds |
 | 2 | Architecture Evolution — Silver → Gold |
 | 3 | Odoo Accounting System — Docker + JSON-RPC |
-| 4 | Facebook Business Page Integration — Meta Graph API |
-| 5 | Instagram Business Account Integration |
-| 6 | Full Cross-Domain Integration (Personal + Business) |
-| 7 | Weekly CEO Briefing Generation |
-| 8 | Comprehensive Audit Logging |
-| 9 | Error Recovery & Graceful Degradation |
-| 10 | Ralph Wiggum Loop — Autonomous Multi-Step Tasks |
-| 11 | Multiple MCP Servers Architecture |
-| 12 | Complete Flow — Putting It All Together |
+| 4 | Social Media Platforms — Facebook, Instagram, Twitter/X, LinkedIn |
+| 5 | Weekly CEO Briefing Generation |
+| 6 | Comprehensive Audit Logging |
+| 7 | Error Recovery & Graceful Degradation |
+| 8 | Ralph Wiggum Loop — Autonomous Multi-Step Tasks |
+| 9 | Multiple MCP Servers Architecture |
+| 10 | Complete Flow — Putting It All Together |
 
 ### PART 2: IMPLEMENTATION (PROMPT-DRIVEN via SpecKit Plus)
 | Section | Topic |
 |---------|-------|
-| 13 | How It Works — SpecKit Plus Workflow |
-| 14 | The Prompts That Build Gold Tier (Prompt 0-4) |
-| 15 | Manual Setup Steps (Docker, Odoo, Meta API, MCP) |
-| 16 | Testing & Verification |
-| 17 | Troubleshooting & Common Issues |
+| 11 | How It Works — SpecKit Plus Workflow |
+| 12 | The Prompts That Build Gold Tier (Prompt 0-4) |
+| 13 | Manual Setup Steps (Docker, Odoo, Meta API, MCP) |
+| 14 | Testing & Verification |
+| 15 | Troubleshooting & Common Issues |
 
-> **Important:** Section 14 starts with **Prompt 0** (Analyze Sources) — this is MANDATORY before any other prompt. Do NOT skip it.
+> **Important:** Section 12 starts with **Prompt 0** (Analyze Sources) — this is MANDATORY before any other prompt. Do NOT skip it.
 
 ### APPENDIX
 | Section | Topic |
@@ -58,12 +56,14 @@ By the end of this video, you will:
 - Understand how **Odoo Accounting** runs locally via Docker and connects via JSON-RPC API
 - Understand how **Facebook Business Page** integration works via Meta Graph API
 - Understand how **Instagram Business/Creator Account** integration works (same Meta API)
+- Understand how **Twitter/X** automation works via Playwright (browser-based, free)
+- Understand how **LinkedIn** automation works via Playwright (browser-based, free)
 - Know what **Cross-Domain Integration** means — Personal + Business domains connected
 - Understand **CEO Briefing** generation — automated weekly business intelligence
 - Know how **Audit Logging** tracks every AI action with workflow IDs
 - Understand **Error Recovery** — exponential backoff, component health tracking
 - Know what the **Ralph Wiggum Loop** is — autonomous multi-step task completion
-- See how **Multiple MCP Servers** work together (4 servers simultaneously)
+- See how **Multiple MCP Servers** work together (6 servers simultaneously)
 
 ### Who Is This For?
 
@@ -106,11 +106,13 @@ SILVER TIER (Personal Domain Only):
 
 GOLD TIER (Personal + Business Connected):
   Gmail        → Gmail Watcher    ┐
-  WhatsApp     → WhatsApp Watcher  ├→ Cross-Domain Orchestrator → Claude → Multiple MCP Servers
+  WhatsApp     → WhatsApp Watcher  ├→ Cross-Domain Orchestrator → Claude → 6 MCP Servers
   Odoo         ← JSON-RPC (Docker)┤    (Workflow Engine)        ↓
-  Facebook     ← Meta Graph API   ┘    ┌→ Odoo (Invoice)
-                                       ├→ Facebook (Post)
-                                       ├→ Instagram (Post)
+  Facebook     ← Meta Graph API   ┤    ┌→ Odoo (Invoice)
+  Instagram    ← Meta Graph API   ┤    ├→ Facebook (Post)
+  Twitter/X    ← Playwright       ┤    ├→ Instagram (Post)
+  LinkedIn     ← Playwright       ┘    ├→ Twitter (Tweet)
+                                       ├→ LinkedIn (Post)
                                        └→ Email (Reply)
 ```
 
@@ -131,23 +133,22 @@ GOLD TIER (Personal + Business Connected):
  ### Why Domains Must Connect
 
  Without Cross-Domain (Silver — silos):
- - Gmail pe client ka email aaya: "Invoice bhejo 5000 rupees ka"
+ - **Scenario:** Tum freelance web developer ho. Client "Ahmed" ne email kiya: "Bhai project complete ho gaya, 50,000 ka invoice bhejo"
  - AI ne email parha, summary banaya, vault mein daal diya
- - **Bas. Khatam.** Aage kuch nahi hua.
+ - **Bas. Khatam.** Tumhe khud Odoo mein jaake invoice banana padega, khud email karna padega, khud record rakhna padega.
 
  With Cross-Domain Integration (Gold — connected):
- - Gmail pe client ka email aaya: "Invoice bhejo 5000 rupees ka"
- - AI ne email parha ✅
- - AI ne **Odoo Accounting** mein invoice create kiya ✅
- - AI ne invoice ko **email** se client ko bhej diya ✅
- - AI ne **WhatsApp** pe aapko bataya: "Client X ko 5000 ka invoice bheja" ✅
- - AI ne **weekly audit report** mein ye transaction record kiya ✅
- - Agar payment aa gayi toh **social media** pe thank you post bhi kar sakta hai ✅
+ - **Same Scenario:** Client "Ahmed" ne email kiya: "Bhai project complete ho gaya, 50,000 ka invoice bhejo"
+ - AI ne email parha → samjha ke ye invoice request hai ✅
+ - AI ne **Odoo Accounting** mein Ahmed ke naam se 50,000 PKR ka invoice create kiya ✅
+ - AI ne **email** se Ahmed ko invoice bhej diya: "Hi Ahmed, here's your invoice #INV-2026-042" ✅
+ - AI ne **WhatsApp** pe tumhe (owner ko) notify kiya: "Ahmed ka 50,000 PKR invoice create aur send ho gaya — Invoice #INV-2026-042" ✅
+ - AI ne **audit log** mein ye poora workflow record kiya (workflow_id: wf-abc123) ✅
 
  > **Roman Urdu Example:**
- > Dekho? Ek hi trigger (email) ne multiple domains mein kaam karwaya.
- > Bina cross-domain ke: AI sirf email padhta tha, kuch nahi karta tha.
- > Cross-domain ke saath: AI email se business workflow start karta hai aur takhleef deta hai.
+ > Dekho? Ahmed ne sirf ek email bheja — aur AI ne poora kaam kar diya.
+ > Invoice bhi banaya, client ko bheja bhi, aur tumhe WhatsApp pe update bhi de diya.
+ > Tumhe kuch karna nahi padha — bas WhatsApp pe notification dekhi aur chain se baith gaye.
  >
  > Yeh hai asl maqsad — har domain ko pata ho ke doosre domain mein kya ho raha hai,
  > aur sab milke ek cohesive employee ki tarah kaam karein.
@@ -155,18 +156,139 @@ GOLD TIER (Personal + Business Connected):
  ### How It Works Technically
 
  ```
- Trigger: Gmail email aaya (client invoice maang raha hai)
+ Trigger: Client "Ahmed" ne email kiya: "Project ho gaya, 50,000 ka invoice bhejo"
      ↓
  Orchestrator: "Ye invoice request hai, cross-domain workflow start karna hai"
      ↓
- Action 1: Odoo MCP Server → Invoice create karo (Business-Finance)
- Action 2: Email MCP Server → Client ko invoice bhejo (Personal)
- Action 3: WhatsApp MCP → Owner ko notify karo (Personal)
- Action 4: Facebook MCP → Thank you post karo (Business-Social)
- Action 5: Audit Log → Transaction record karo (System)
+ Action 1: Odoo MCP Server → Ahmed ke naam se 50,000 ka invoice create (Business-Finance)
+ Action 2: Email MCP Server → Ahmed ko invoice email bhejo (Personal)
+ Action 3: WhatsApp MCP → Owner (tumhe) notify karo: "Ahmed ka invoice sent" (Personal)
+ Action 4: Audit Log → Poora workflow record karo with workflow_id (System)
      ↓
  Done! Har domain ne apna kaam kiya, sab connected hai.
  ```
+
+ ### Workflow Engine
+
+ The **Workflow Engine** (`src/orchestrator/workflow_engine.py`) manages cross-domain workflows:
+
+ **Responsibilities:**
+ - Generate unique `workflow_id` (UUID format)
+ - Execute steps sequentially
+ - Track completed/failed/remaining steps
+ - Handle partial failures (preserve completed steps)
+ - Log all actions with shared `workflow_id`
+
+ ### Workflow State Tracking
+
+ ```json
+ {
+   "workflow_id": "wf-abc123",
+   "trigger": "EMAIL_18d4a5b2.md",
+   "steps_total": 4,
+   "steps_completed": 2,
+   "steps_failed": 0,
+   "steps_remaining": 2,
+   "status": "in_progress",
+   "actions": [
+     {"step": 1, "action": "odoo_invoice_created", "status": "success"},
+     {"step": 2, "action": "email_sent_to_client", "status": "success"},
+     {"step": 3, "action": "whatsapp_owner_notified", "status": "pending"},
+     {"step": 4, "action": "audit_log_recorded", "status": "pending"}
+   ]
+ }
+ ```
+
+ ### Cross-Domain Use Cases (Real Industry Examples)
+
+ | # | Scenario | Trigger | What AI Does (Cross-Domain) |
+ |---|----------|---------|----------------------------|
+ | 1 | **Freelancer Invoice** | Client emails: "Project done, invoice bhejo" | Odoo invoice create → Client ko email → Owner ko WhatsApp notify |
+ | 2 | **Payment Received** | Client WhatsApp: "Payment kar di" | Odoo mein payment mark → Client ko thank you email → Owner ko WhatsApp confirm |
+ | 3 | **Overdue Follow-up** | Odoo: Invoice 7 days overdue | Client ko reminder email → Owner ko WhatsApp alert |
+ | 4 | **Product Launch** | Owner WhatsApp: "Naye product ki post karo" | Facebook post → Instagram post → Twitter post → LinkedIn post |
+ | 5 | **Weekly Report** | Sunday 10 PM (scheduled) | Odoo se financial data + Social media analytics → CEO Briefing generate → Owner ko email |
+
+ ### Audit Logging with Workflow IDs
+
+ Every action in a workflow shares the same `workflow_id`:
+
+ ```json
+ // Log entry 1 — Invoice created
+ {
+   "timestamp": "2026-03-06T10:30:00Z",
+   "action_type": "odoo_invoice_created",
+   "workflow_id": "wf-abc123",
+   "mcp_server": "fte-odoo",
+   "result": "success"
+ }
+
+ // Log entry 2 — Email sent to client
+ {
+   "timestamp": "2026-03-06T10:30:15Z",
+   "action_type": "email_sent",
+   "workflow_id": "wf-abc123",
+   "mcp_server": "fte-email",
+   "result": "success"
+ }
+
+ // Log entry 3 — Owner notified on WhatsApp
+ {
+   "timestamp": "2026-03-06T10:30:20Z",
+   "action_type": "whatsapp_notification",
+   "workflow_id": "wf-abc123",
+   "mcp_server": "fte-whatsapp",
+   "result": "success"
+ }
+ ```
+
+ > **Benefit:** Kal ko agar kuch galat ho — toh `wf-abc123` search karo logs mein aur poora workflow trace ho jayega.
+
+ ### What Are Multiple MCP Servers?
+
+ In Silver Tier, you had **one MCP server** (Email). In Gold Tier, you have **6 MCP servers** — one for each service:
+
+ ```
+ ┌──────────────────────────────────────────────────────────────────────┐
+ │                        CLAUDE CODE (AI)                              │
+ │                      (Orchestrates All)                              │
+ └──────────────────────────┬───────────────────────────────────────────┘
+                            │
+    ┌──────────┬──────────┬─┼─────────┬──────────┬──────────┐
+    ▼          ▼          ▼ ▼         ▼          ▼          ▼
+ ┌────────┐┌────────┐┌────────┐┌─────────┐┌────────┐┌────────┐
+ │ Email  ││  Odoo  ││Facebook││Instagram││Twitter ││LinkedIn│
+ │  MCP   ││  MCP   ││  MCP   ││   MCP   ││  MCP   ││  MCP   │
+ └───┬────┘└───┬────┘└───┬────┘└────┬────┘└───┬────┘└───┬────┘
+     │         │         │          │         │         │
+     ▼         ▼         ▼          ▼         ▼         ▼
+ ┌────────┐┌────────┐┌────────┐┌─────────┐┌────────┐┌────────┐
+ │ Gmail  ││ Odoo   ││ Meta   ││  Meta   ││Twitter ││LinkedIn│
+ │  API   ││JSON-RPC││ Graph  ││  Graph  ││  Web   ││  Web   │
+ └────────┘└────────┘└────────┘└─────────┘└────────┘└────────┘
+ ```
+
+ ### MCP Servers in Gold Tier
+
+ | MCP Server | Domain | Method | Tools Available |
+ |------------|--------|--------|-----------------|
+ | `fte-email` | Personal — Email | Gmail API | send_email, draft_email |
+ | `fte-odoo` | Business — Finance | JSON-RPC | create_invoice, get_invoices, mark_payment, get_weekly_summary, create_expense, get_expenses |
+ | `fte-facebook` | Business — Social | Meta Graph API | create_page_post, get_page_posts, get_post_comments, reply_to_comment, get_page_insights |
+ | `fte-instagram` | Business — Social | Meta Graph API | create_ig_post, create_ig_reel, get_ig_media, get_ig_comments, reply_ig_comment, get_ig_insights |
+ | `fte-twitter` | Business — Social | Playwright | post_tweet, get_my_tweets, reply_to_tweet, like_tweet |
+ | `fte-linkedin` | Business — Social | Playwright | create_post, get_posts, comment_post, like_post |
+
+ > **Roman Urdu Example:**
+ > 6 MCP servers hain — jaise 6 alag alag workers:
+ > - Email wala — Gmail handle karta hai
+ > - Odoo wala — Invoices aur accounting handle karta hai
+ > - Facebook wala — Page posts handle karta hai
+ > - Instagram wala — Photos aur reels handle karta hai
+ > - Twitter wala — Tweets handle karta hai
+ > - LinkedIn wala — Professional posts handle karta hai
+ >
+ > Sab alag hain, lekin sab Claude Code se connected hain.
 
  ---
 
@@ -179,6 +301,8 @@ GOLD TIER (Personal + Business Connected):
 │  + fte-odoo (NEW — JSON-RPC to Docker)                           │
 │  + fte-facebook (NEW — Meta Graph API)                           │
 │  + fte-instagram (NEW — Meta Graph API)                          │
+│  + fte-twitter (NEW — Playwright)                                │
+│  + fte-linkedin (NEW — Playwright)                               │
 ├──────────────────────────────────────────────────────────────────┤
 │  LAYER 3: BRAIN (Claude Code)                                    │
 │  Now has Ralph Wiggum Loop (autonomous multi-step)      ← GOLD:  │
@@ -206,28 +330,30 @@ GOLD TIER (Personal + Business Connected):
 | Senses | File + Gmail + WhatsApp | Same + Cross-Domain triggers | Triggers cascade across domains |
 | Memory | Vault + Dashboard | Same + Briefings/ + Tasks/ + .state/ | New folders for new features |
 | Brain | Claude + Plan.md | Claude + Ralph Wiggum + Workflow Engine | Autonomous multi-step execution |
-| Hands | 1 MCP (email) | 4 MCPs (email, odoo, facebook, instagram) | 3 new MCP servers |
+| Hands | 1 MCP (email) | 6 MCPs (email, odoo, facebook, instagram, twitter, linkedin) | 5 new MCP servers |
 
-### The Gold Tier Difference: 12 New Capabilities
+### The Gold Tier Difference: 14 New Capabilities
 
 | # | Capability | Description | Business Value |
 |---|------------|-------------|----------------|
 | 1 | **Odoo Accounting** | Self-hosted accounting via Docker | Track invoices, payments, expenses |
-| 2 | **Facebook Integration** | Business Page posting via Meta API | Automated social media presence |
-| 3 | **Instagram Integration** | Business/Creator account posting | Visual content automation |
-| 4 | **Cross-Domain Workflows** | Personal triggers → Business actions | End-to-end automation |
-| 5 | **CEO Briefing** | Weekly automated business report | Monday morning intelligence |
-| 6 | **Audit Logging** | Every action logged with workflow ID | Complete traceability |
-| 7 | **Error Recovery** | Exponential backoff retry | System doesn't crash on failures |
-| 8 | **Graceful Degradation** | Continue when components fail | High availability |
-| 9 | **Component Health** | Track health of all 5 domains | Know what's working |
-| 10 | **Ralph Wiggum Loop** | Autonomous multi-step tasks | True employee-like behavior |
-| 11 | **Multiple MCP Servers** | 4 servers running simultaneously | Modular, scalable architecture |
-| 12 | **Agent Skills (Gold)** | 6 new skills for all functionality | Reusable, maintainable AI logic |
+| 2 | **Facebook Integration** | Business Page posting via Meta Graph API | Automated social media presence |
+| 3 | **Instagram Integration** | Business/Creator account posting via Meta Graph API | Visual content automation |
+| 4 | **Twitter/X Integration** | Tweet posting via Playwright (free, no API cost) | Real-time social media presence |
+| 5 | **LinkedIn Integration** | Professional posting via Playwright (free) | B2B networking automation |
+| 6 | **Cross-Domain Workflows** | Personal triggers → Business actions | End-to-end automation |
+| 7 | **CEO Briefing** | Weekly automated business report | Monday morning intelligence |
+| 8 | **Audit Logging** | Every action logged with workflow ID | Complete traceability |
+| 9 | **Error Recovery** | Exponential backoff retry | System doesn't crash on failures |
+| 10 | **Graceful Degradation** | Continue when components fail | High availability |
+| 11 | **Component Health** | Track health of all domains | Know what's working |
+| 12 | **Ralph Wiggum Loop** | Autonomous multi-step tasks | True employee-like behavior |
+| 13 | **Multiple MCP Servers** | 6 servers running simultaneously | Modular, scalable architecture |
+| 14 | **Agent Skills (Gold)** | New skills for all functionality | Reusable, maintainable AI logic |
 
 > **Roman Urdu Example:**
 > Silver mein agar client ka email aata tha "Invoice bhejo" → AI padhta tha, summary banata tha, vault mein daal deta tha.
-> Gold mein same email aata hai → AI invoice banata hai Odoo mein → email karta hai client ko → WhatsApp pe aapko batata hai → Facebook pe thank you post karta hai.
+> Gold mein same email aata hai → AI invoice banata hai Odoo mein → client ko email pe bhejta hai → tumhe WhatsApp pe notify karta hai.
 > Yehi hai **Cross-Domain Integration** — ek trigger, multiple domains mein actions.
 
 ---
@@ -394,7 +520,7 @@ The `fte-odoo` MCP server exposes 6 tools:
 
 ---
 
-## SECTION 4: Social Media Platfroms
+## SECTION 4: SOCIAL MEDIA PLATFORMS — Facebook, Instagram, Twitter/X, LinkedIn
 
 Gold Tier integrates **four social media platforms**:
 
@@ -495,178 +621,7 @@ Gold Tier integrates **four social media platforms**:
 
 ---
 
-## SECTION 5: FULL CROSS-DOMAIN INTEGRATION
-
-### What is Cross-Domain Integration?
-
-**Cross-Domain** means connecting **Personal Domain** (Gmail, WhatsApp) with **Business Domain** (Odoo, Facebook, Instagram).
-
-A single trigger in one domain can cascade actions across multiple domains.
-
-### Personal vs Business Domains
-
-| Domain | Platforms | Purpose |
-|--------|-----------|---------|
-| **Personal** | Gmail, WhatsApp, LinkedIn | Communication, networking |
-| **Business** | Odoo, Facebook, Instagram | Accounting, social media, marketing |
-
-### Without Cross-Domain (Silver Tier — Silos)
-
-```
-Email arrives: "Please send invoice for 5000 PKR"
-  ↓
-Gmail Watcher reads email
-  ↓
-Creates summary in vault
-  ↓
-DONE. Khatam. Aage kuch nahi.
-```
-
-### With Cross-Domain (Gold Tier — Connected)
-
-```
-Email arrives: "Please send invoice for 5000 PKR"
-  ↓
-Gmail Watcher reads email
-  ↓
-Cross-Domain Orchestrator detects invoice request
-  ↓
-Workflow Engine starts (workflow_id: wf-abc123)
-  ↓
-Step 1: Create invoice in Odoo (MCP: fte-odoo)
-  ↓
-Step 2: Send invoice via email (MCP: fte-email, requires approval)
-  ↓
-Step 3: Notify you on WhatsApp (MCP: fte-whatsapp)
-  ↓
-Step 4: Log all actions with same workflow_id
-  ↓
-Step 5: Update Dashboard
-  ↓
-DONE. Complete workflow.
-```
-
-> **Roman Urdu Example:**
-> Silver mein har platform alag tha — Gmail ka kaam Gmail mein, WhatsApp ka kaam WhatsApp mein.
-> Gold mein sab connected hai — Email aaya → Odoo mein invoice bana → Email reply aaya → WhatsApp pe notification → Facebook pe thank you post.
-> Yehi hai **Cross-Domain Integration** — ek trigger, multiple actions across domains.
-
-### Workflow Engine
-
-The **Workflow Engine** (`src/orchestrator/workflow_engine.py`) manages cross-domain workflows:
-
-**Responsibilities:**
-- Generate unique `workflow_id` (UUID format)
-- Execute steps sequentially
-- Track completed/failed/remaining steps
-- Handle partial failures (preserve completed steps)
-- Log all actions with shared `workflow_id`
-
-### Workflow State Tracking
-
-```json
-{
-  "workflow_id": "wf-abc123",
-  "trigger": "EMAIL_18d4a5b2.md",
-  "steps_total": 5,
-  "steps_completed": 3,
-  "steps_failed": 0,
-  "steps_remaining": 2,
-  "status": "in_progress",
-  "actions": [
-    {"step": 1, "action": "odoo_invoice_created", "status": "success"},
-    {"step": 2, "action": "email_sent", "status": "success"},
-    {"step": 3, "action": "whatsapp_notification", "status": "success"},
-    {"step": 4, "action": "facebook_post", "status": "pending"},
-    {"step": 5, "action": "dashboard_update", "status": "pending"}
-  ]
-}
-```
-
-### Cross-Domain Use Cases
-
-| Trigger | Domain | Cascade Actions |
-|---------|--------|-----------------|
-| Client email: "Send invoice" | Gmail | Odoo invoice → Email reply → WhatsApp notification |
-| WhatsApp: "Payment sent" | WhatsApp | Odoo payment recorded → Email confirmation |
-| Odoo: Invoice overdue | Odoo | Email reminder → WhatsApp follow-up |
-| Facebook: Positive comment | Facebook | Thank you reply → Instagram story idea |
-
-### Audit Logging with Workflow IDs
-
-Every action in a workflow shares the same `workflow_id`:
-
-```json
-// Log entry 1
-{
-  "timestamp": "2026-03-06T10:30:00Z",
-  "action_type": "odoo_invoice_created",
-  "workflow_id": "wf-abc123",
-  "mcp_server": "fte-odoo",
-  "result": "success"
-}
-
-// Log entry 2
-{
-  "timestamp": "2026-03-06T10:30:15Z",
-  "action_type": "email_sent",
-  "workflow_id": "wf-abc123",
-  "mcp_server": "fte-email",
-  "result": "success"
-}
-```
-
-> **Benefit:** You can trace the entire workflow by searching for `wf-abc123` in audit logs.
-
-### What Are Multiple MCP Servers?
-
-In Silver Tier, you had **one MCP server** (Email). In Gold Tier, you have **multiple MCP servers** — one for each domain.
-
- ```
- ┌──────────────────────────────────────────────────────────────┐
- │                      CLAUDE CODE (AI)                        │
- │                    (Orchestrates All)                        │
- └────────────────────────────┬─────────────────────────────────┘
-                              │
-      ┌───────────┬───────────┼───────────┬───────────┐
-      ▼           ▼           ▼           ▼           ▼
- ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
- │  Email  │ │  Odoo   │ │ Facebook│ │ Instagram│ │ Twitter │
- │   MCP   │ │   MCP   │ │   MCP   │ │   MCP   │ │   MCP   │
- └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘
-      │           │           │           │           │
-      ▼           ▼           ▼           ▼           ▼
- ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
- │  Gmail  │ │  Odoo   │ │  Meta   │ │  Meta   │ │ Twitter │
- │   API   │ │ JSON-RPC│ │ Graph   │ │ Graph   │ │  Web    │
- └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘
- ```
-
-### MCP Servers in Gold Tier
-
-| MCP Server | Domain | Tools Available |
-|------------|--------|-----------------|
-| `fte-email` | Personal — Email | send_email, draft_email |
-| `fte-odoo` | Business — Finance | create_invoice, get_invoices, mark_payment, get_weekly_summary, create_expense, get_expenses |
-| `fte-facebook` | Business — Social | create_page_post, get_page_posts, get_post_comments, reply_to_comment, get_page_insights |
-| `fte-instagram` | Business — Social | create_ig_post, create_ig_reel, get_ig_media, get_ig_comments, reply_ig_comment,
-get_ig_insights |
-| `fte-twitter` | Business — Social | post_tweet, get_my_tweets, reply_to_tweet, like_tweet |
-| `fte-linkedin` | Business — Social | create_post, get_posts, comment_post, like_post |
-
-> **Roman Urdu Example:**
-> MCP servers ek aisa system hai jahan har ek service ke liye alag server hai.
-> Jaise agar aapko Facebook par post karna hai, toh Facebook MCP server use hoga.
-> Agar Odoo se invoice banana hai, toh Odoo MCP server use hoga.
-> Sab alag hain, lekin sab Claude Code se connected hain.
->
-> Yeh Gold Tier ka core requirement hai — "Multiple MCP servers for different action types."
-
----
-
----
-
-## SECTION 6: WEEKLY CEO BRIEFING GENERATION
+## SECTION 5: WEEKLY CEO BRIEFING GENERATION (CEO BRIEFING)
 
 ### What is CEO Briefing?
 
@@ -783,7 +738,7 @@ Last known status: Healthy (2026-03-08T15:30:00Z)
 
 ---
 
-## SECTION 7: COMPREHENSIVE AUDIT LOGGING
+## SECTION 6: COMPREHENSIVE AUDIT LOGGING
 
 ### What is Audit Logging?
 
@@ -884,7 +839,7 @@ AI_Employee_Vault/
 
 ---
 
-## SECTION 8: ERROR RECOVERY & GRACEFUL DEGRADATION
+## SECTION 7: ERROR RECOVERY & GRACEFUL DEGRADATION
 
 ### Why Error Recovery Matters
 
@@ -980,7 +935,7 @@ def call_odoo_api():
 
 ---
 
-## SECTION 9: RALPH WIGGUM LOOP
+## SECTION 8: RALPH WIGGUM LOOP
 
 ### What is the Ralph Wiggum Loop?
 
@@ -1246,7 +1201,7 @@ Step #5: Save and Send
 ```
 ---
 
-## SECTION 10: MULTIPLE MCP SERVERS ARCHITECTURE
+## SECTION 9: MULTIPLE MCP SERVERS ARCHITECTURE
 
 ### What are MCP Servers?
 
@@ -1267,6 +1222,8 @@ Claude (Brain) → MCP Servers (Hands) → External APIs (Tools)
 | `fte-odoo` | Odoo JSON-RPC | Invoices, payments, expenses |
 | `fte-facebook` | Meta Graph API | Facebook Page posting |
 | `fte-instagram` | Meta Graph API | Instagram publishing |
+| `fte-twitter` | Playwright (Browser) | Twitter/X posting |
+| `fte-linkedin` | Playwright (Browser) | LinkedIn posting |
 
 ### MCP Server Architecture
 
@@ -1277,8 +1234,8 @@ Claude (Brain) → MCP Servers (Hands) → External APIs (Tools)
 │  MCP Protocol                                           │
 │    ↓ Tool calls                                         │
 │  MCP Server (Python)                                    │
-│    ↓ HTTP calls                                         │
-│  External API (Odoo, Meta Graph, Gmail)                 │
+│    ↓ HTTP calls / Browser automation                    │
+│  External API (Odoo, Meta Graph, Gmail, Twitter, LinkedIn) │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -1319,6 +1276,18 @@ Claude (Brain) → MCP Servers (Hands) → External APIs (Tools)
       "type": "stdio",
       "command": "uv",
       "args": ["run", "python", "src/mcp/instagram_server.py"],
+      "env": {}
+    },
+    "fte-twitter": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "python", "src/mcp/twitter_server.py"],
+      "env": {}
+    },
+    "fte-linkedin": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "python", "src/mcp/linkedin_server.py"],
       "env": {}
     }
   }
@@ -1372,19 +1341,22 @@ Each MCP server's health is tracked:
 - Handles: Authentication, rate limits, token expiration
 
 > **Roman Urdu Example:**
-> 4 MCP servers hain — jaise 4 alag alag workers:
-> - Email wala
-> - Odoo wala
-> - Facebook wala
-> - Instagram wala
-> 
-> Dono (Facebook + Instagram) ek hi API use karte hain — Meta Graph API.
+> 6 MCP servers hain — jaise 6 alag alag workers:
+> - Email wala — Gmail handle karta hai
+> - Odoo wala — Accounting handle karta hai
+> - Facebook wala — Page posts handle karta hai
+> - Instagram wala — Photos aur reels handle karta hai
+> - Twitter wala — Tweets handle karta hai
+> - LinkedIn wala — Professional posts handle karta hai
+>
+> Facebook + Instagram dono ek hi API use karte hain — Meta Graph API.
 > Isliye ek shared client hai — `_meta_client.py`.
 > Dono usko use karte hain — code repeat nahi hota.
+> Twitter + LinkedIn dono Playwright use karte hain — browser automation se free mein kaam hota hai.
 
 ---
 
-## SECTION 11: COMPLETE FLOW — PUTTING IT ALL TOGETHER
+## SECTION 10: COMPLETE FLOW — PUTTING IT ALL TOGETHER
 
 ### End-to-End Example: Client Invoice Request
 
@@ -1430,6 +1402,33 @@ Each MCP server's health is tracked:
   ↓ Stop hook active
   ↓ Iteration 1 begins
 ```
+
+> **How Multiple Tasks Work:**
+>
+> Agar ek waqt mein 3 Needs_Action files aayin — Claude har ek ke liye alag TASK file banata hai:
+>
+> ```
+> Needs_Action/
+> ├── EMAIL_18d4a5b2.md    → "Ahmed: Invoice bhejo 50,000"
+> ├── EMAIL_29e5b6c3.md    → "Sara: Payment kar di"
+> ├── WA_37f8c9d4.md       → "Ali: Meeting schedule karo"
+>
+> Claude reads Plan.md (ek baar) → samjhta hai rules
+>     ↓
+> Tasks/
+> ├── TASK_invoice_ahmed_20260306.md      (Step 2/4 — chal raha hai)
+> ├── TASK_payment_sara_20260306.md       (Step 1/3 — abhi start hua)
+> ├── TASK_meeting_ali_20260306.md        (Step 0/2 — queue mein hai)
+> ```
+>
+> Claude **ek waqt mein ek TASK** execute karta hai (sequentially):
+> 1. Ahmed ka invoice TASK → sab steps done → Tasks/Done/ mein
+> 2. Stop Hook: "Tasks/ mein aur file hai?" → HAI! → Continue
+> 3. Sara ka payment TASK → sab steps done → Tasks/Done/ mein
+> 4. Stop Hook: "Tasks/ mein aur file hai?" → HAI! → Continue
+> 5. Ali ka meeting TASK → sab steps done → Tasks/Done/ mein
+> 6. Stop Hook: "Tasks/ mein koi file?" → NAHI! → Claude ruk gaya
+`
 
 #### Step 5: Step 1 — Create Odoo Invoice
 
@@ -1637,7 +1636,7 @@ Each MCP server's health is tracked:
 # PART 2: IMPLEMENTATION (PROMPT-DRIVEN)
 # ═════════════════════════
 
-## SECTION 13: HOW IT WORKS — SPECKIT PLUS WORKFLOW
+## SECTION 11: HOW IT WORKS — SPECKIT PLUS WORKFLOW
 
 ### The SpecKit Plus Approach
 
@@ -1672,7 +1671,7 @@ specs/003-gold-fte-autonomous/
 
 ---
 
-## SECTION 14: THE PROMPTS THAT BUILD GOLD TIER
+## SECTION 12: THE PROMPTS THAT BUILD GOLD TIER
 
 ### PROMPT 0 — Analyze Sources & Understand Context (MUST DO FIRST)
 
@@ -2104,7 +2103,7 @@ Test each component before moving to next.
 
 ---
 
-## SECTION 15: MANUAL SETUP STEPS (Docker, Odoo, Meta API, MCP)
+## SECTION 13: MANUAL SETUP STEPS (Docker, Odoo, Meta API, MCP)
 
 ## FACEBOOK (STEP-BY-STEP)
 
@@ -2889,7 +2888,7 @@ uv run python -m src.main briefing
 
 ---
 
-## SECTION 16: TESTING & VERIFICATION
+## SECTION 14: TESTING & VERIFICATION
 
 ### Odoo Test
 ```bash
@@ -2980,7 +2979,7 @@ EOF
 
 ---
 
-## SECTION 17: TROUBLESHOOTING
+## SECTION 15: TROUBLESHOOTING
 
 ### Common Issues
 
@@ -3104,7 +3103,7 @@ A: Yes. Sensitive data (tokens, passwords) are never logged. Logs stored locally
 ### When to Start Platinum?
 
 - ✅ Gold Tier fully implemented and working
-- ✅ All 4 MCP servers operational
+- ✅ All 6 MCP servers operational
 - ✅ CEO Briefing generating weekly
 - ✅ Cross-domain workflows stable
 - ✅ Audit logs clean and traceable
