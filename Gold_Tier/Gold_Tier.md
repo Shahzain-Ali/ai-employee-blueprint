@@ -2551,7 +2551,7 @@ The `fte-facebook` MCP server exposes 5 tools:
 
 3. **"Add People"** click karo
 
-4. **"Instagram Tester"** role select karo
+4. **"Instagram Tester"** role select karo **Add People** per click karo aur **Instagram Tester** select karo.
 
 5. Instagram username type karo: `{your_instagram_username}`
 
