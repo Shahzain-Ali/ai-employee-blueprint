@@ -2008,13 +2008,15 @@ Solution: Use **Firefox headless** instead, or use dual-browser architecture:
 - Firefox for headless operations
 - Cookie injection between browsers
 
-#### Problem 5: Token Expiration
+#### Problem 5: Token Expiration & Invalidation
 
 | Token | Expires? | Renewal |
 |-------|----------|---------|
-| FB_PAGE_ACCESS_TOKEN (Page Token) | **Never** | One-time setup |
+| FB_PAGE_ACCESS_TOKEN (Page Token) | **Never** | Re-derive when renewing IG token |
 | IG_ACCESS_TOKEN (User Token) | **60 days** | Must renew every ~50 days |
 | Twitter Cookies | **Varies** | Re-login when needed |
+
+> **⚠️ CRITICAL:** Facebook aur Instagram tokens ALAG ALAG mat banao! Jab naya User Token generate hota hai toh purana invalidate ho jata hai — aur usse derived Page Token ki permissions bhi badal jaati hain. **Hamesha EK token banao saari 9 permissions ke saath** (Facebook + Instagram). Details ke liye Facebook Phase 6 dekho.
 
 ---
 
@@ -2248,7 +2250,7 @@ Test each component before moving to next.
 
 ---
 
-### Phase 4: Page Access Token Generate Karna (10 minutes)
+### Phase 4: Page Access Token Generate Karna (Testing ke liye — 10 minutes)
 
 > **⚠️ CRITICAL: Do Tarah Ki Page IDs**
 >
@@ -2260,6 +2262,9 @@ Test each component before moving to next.
 | Business Portfolio Page ID | `1044367502088758` | Business Settings → Pages mein |
 
 **API ke liye Business Portfolio Page ID use karo!**
+
+> **⚠️ NOTE:** Ye phase sirf **testing** ke liye hai — short-lived token se quick test karo.
+> **Production ke liye Phase 6 mein long-lived tokens banao** (Facebook + Instagram dono ek saath).
 
 **Token Generate Karne Ka Correct Method:**
 
@@ -2331,7 +2336,15 @@ Test each component before moving to next.
 
 ---
 
-### Phase 6: Long-Lived Tokens Banana (Production Ke Liye ZAROORI — 10 minutes)
+### Phase 6: Long-Lived Tokens Banana — Facebook + Instagram DONO Ek Saath (ZAROORI — 15 minutes)
+
+> **⚠️ CRITICAL WARNING: Tokens ALAG ALAG Mat Banao!**
+>
+> Agar tum pehle Facebook ke liye token banao (5 permissions) aur phir Instagram ke liye alag token banao (4 permissions) — toh **doosra token pehle wale ki permissions KHATAM kar dega!**
+>
+> **Kyun?** Kyunki dono tokens ek hi User Account se aate hain. Jab tum naya User Token generate karte ho Graph API Explorer mein, toh purana User Token **invalidate** ho jata hai — aur usse derived Page Token ki permissions bhi badal jaati hain.
+>
+> **Solution:** EK token banao **saari 9 permissions** ke saath (Facebook + Instagram) — phir ussi ek token se dono derive karo.
 
 > **Kyun Zaroori Hai?**
 >
@@ -2340,7 +2353,7 @@ Test each component before moving to next.
 | Token Type | Expiry | Kiske Liye |
 |---|---|---|
 | Short-lived User Token | 1-2 hours | Graph Explorer testing |
-| **Long-lived User Token** | **60 days** | Instagram automation |
+| **Long-lived User Token** | **60 days** | **Instagram automation** |
 | **Long-lived Page Token** | **Never expires** | **Facebook automation** |
 
 **Step 1: App Secret Nikalo**
@@ -2351,31 +2364,45 @@ Test each component before moving to next.
 4. Password daalo agar puche
 5. **App Secret copy** karo — ye safe rakho, kisi ko mat batao
 
-**Step 2: Long-Lived User Token Banao (60 days)**
+**Step 2: SHORT-LIVED User Token Banao — SAARI 9 PERMISSIONS KE SAATH**
 
 1. Graph API Explorer mein **"User or Page"** → **"Get User Access Token"** select karo
-2. Ye permissions add karo:
+2. **SAARI 9 permissions** ek saath add karo:
+
+   **Facebook Permissions (5):**
    - `pages_show_list`
    - `pages_read_engagement`
+   - `pages_read_user_content`
    - `pages_manage_posts`
    - `pages_manage_engagement`
+
+   **Instagram Permissions (4):**
+   - `instagram_basic`
+   - `instagram_content_publish`
+   - `instagram_manage_comments`
+   - `instagram_manage_insights`
+
 3. **"Generate Access Token"** click karo — sab allow karo + Page select karo
 4. Ye **short-lived User Token** hai — isse copy karo
 
-5. **Naye browser tab** mein ye URL paste karo:
+> **⚠️ IMPORTANT:** Saari 9 permissions ek saath honi chahiye! Agar koi permission miss ho gayi toh wo feature kaam nahi karega. Generate karne se pehle list check karo.
+
+**Step 3: Long-Lived User Token Banao (60 days)**
+
+1. **Naye browser tab** mein ye URL paste karo:
 
 ```
 https://graph.facebook.com/v25.0/oauth/access_token?grant_type=fb_exchange_token&client_id={APP_ID}&client_secret={APP_SECRET}&fb_exchange_token={SHORT_LIVED_TOKEN}
 ```
 
-6. **Replace karo:**
+2. **Replace karo:**
    - `{APP_ID}` → Apna App ID
    - `{APP_SECRET}` → App Secret (Step 1 se)
-   - `{SHORT_LIVED_TOKEN}` → Graph Explorer ka short-lived token (Step 4 se)
+   - `{SHORT_LIVED_TOKEN}` → Graph Explorer ka short-lived token (Step 2 se)
 
-7. **Enter** press karo
+3. **Enter** press karo
 
-8. Response aayega:
+4. Response aayega:
 ```json
 {
   "access_token": "EAAxxxxxxx_BOHOT_LAMBA_TOKEN_xxxxxxx",
@@ -2384,20 +2411,29 @@ https://graph.facebook.com/v25.0/oauth/access_token?grant_type=fb_exchange_token
 }
 ```
 
-9. `expires_in: 5184000` = **60 din** — ye confirm karta hai ke long-lived token ban gaya
+5. `expires_in: 5184000` = **60 din** — ye confirm karta hai ke long-lived token ban gaya
 
-10. **Ye token copy karo** — ye tumhara **IG_ACCESS_TOKEN** hai (Instagram ke liye use hoga)
+6. **Ye token copy karo** — ye tumhara **IG_ACCESS_TOKEN** hai (Instagram ke liye directly use hoga)
 
-**Step 3: Never-Expiring Page Token Banao (Facebook ke liye)**
-
-1. Step 2 ka **long-lived User Token** Graph API Explorer ke **Access Token** field mein paste karo
-
-2. **GET** mode mein ye likho:
-```
-{YOUR_PAGE_ID}?fields=access_token
+7. `.env` file mein save karo:
+```env
+# Instagram — 60-day User Token (renew every 50 days)
+IG_ACCESS_TOKEN=EAAxxxxxxx_LONG_LIVED_USER_TOKEN_xxxxxxx
 ```
 
-3. **Submit** karo
+**Step 4: Never-Expiring Page Token Banao (Facebook ke liye — SAME long-lived token se)**
+
+1. Step 3 ka **long-lived User Token** use karo — **naye browser tab** mein ye URL paste karo:
+
+```
+https://graph.facebook.com/v25.0/{YOUR_PAGE_ID}?fields=access_token&access_token={LONG_LIVED_USER_TOKEN}
+```
+
+2. **Replace karo:**
+   - `{YOUR_PAGE_ID}` → Business Portfolio Page ID (e.g., `1044367502088758`)
+   - `{LONG_LIVED_USER_TOKEN}` → Step 3 ka long-lived token
+
+3. **Enter** press karo
 
 4. Response mein jo `access_token` aaye — ye **never-expiring Page Token** hai
 
@@ -2419,6 +2455,18 @@ FB_PAGE_ACCESS_TOKEN=EAAxxxxxxx_PAGE_TOKEN_xxxxxxx
 > **Kyun Never-Expiring?**
 >
 > Jab long-lived User Token (60 days) se Page Token nikaalte ho toh wo **kabhi expire nahi hota** — ye Meta ki official documentation mein confirmed hai.
+
+> **Summary — Ek Token Se Dono Kaam:**
+>
+> ```
+> Graph API Explorer (9 permissions) → Short-lived User Token
+>     ↓ (exchange with App Secret)
+> Long-lived User Token (60 days) ← YE INSTAGRAM KA TOKEN HAI (IG_ACCESS_TOKEN)
+>     ↓ (extract Page Token)
+> Never-Expiring Page Token ← YE FACEBOOK KA TOKEN HAI (FB_PAGE_ACCESS_TOKEN)
+> ```
+>
+> Dono tokens ek hi parent se aate hain — isliye ek doosre ko invalidate NAHI karte.
 
 ---
 
@@ -2594,18 +2642,19 @@ The `fte-facebook` MCP server exposes 5 tools:
 
 4. Click karo aur **"Accept"** karo
 
-**Step 4 — Instagram Permissions Add Karo:**
+**Step 4 — Instagram Permissions Verify Karo:**
 
-1. Browser mein jao: **developers.facebook.com/tools/explorer/**
-2. **"Meta App"** dropdown mein apna App select karo (e.g., "FTE Social Manager")
-3. **"User or Page"** mein **"Get User Access Token"** select karo
-4. **"Permissions"** mein ye add karo:
+> **⚠️ NOTE:** Instagram permissions ka **alag** token mat banao! Facebook Phase 6 mein **saari 9 permissions ek saath** (Facebook + Instagram) token generate hoga. Ye step sirf verify karne ke liye hai ke permissions App mein available hain.
+
+1. Browser mein jao: **developers.facebook.com** → Apna App
+2. Left side: **"App Review"** → **"Permissions and Features"**
+3. Ye Instagram permissions **"Ready to use"** honi chahiye:
    - `instagram_basic`
    - `instagram_content_publish`
    - `instagram_manage_comments`
    - `instagram_manage_insights`
 
-5. **"Generate Access Token"** click karo aur sab allow karo
+4. Agar koi permission missing hai toh **"Request"** karo (Development mode mein automatic approve hoti hai)
 
 ---
 
@@ -2709,61 +2758,49 @@ The `fte-facebook` MCP server exposes 5 tools:
 
 ---
 
-### Phase 6: Instagram Ke Liye Long-Lived Token (60 days)
+### Phase 6: Instagram Ka Long-Lived Token — Facebook Phase 6 Se Already Ban Chuka!
 
-> **Note:** Instagram ke liye **User Token** use hota hai (Page Token nahi).
+> **⚠️ IMPORTANT: Alag token MAT banao!**
+>
+> Agar tum yahan Instagram ke liye alag se token generate karoge (sirf 4 Instagram permissions ke saath), toh **Facebook ka Page Token bhi kharab ho jayega** — uski permissions badal jayengi!
+>
+> **Ye humne real testing mein face kiya** — jab Instagram ka alag token banaya toh Facebook ke Page Token se `pages_manage_posts` aur `pages_show_list` permissions gayab ho gayin.
 
-**Steps:**
+**Instagram ka token already ban chuka hai!** Facebook section ki Phase 6, Step 3 mein jo **long-lived User Token** banaya tha — wohi tumhara **IG_ACCESS_TOKEN** hai.
 
-1. Graph API Explorer mein **"User or Page"** → **"Get User Access Token"** select karo
+```
+Facebook Phase 6 ka flow:
+  Short-lived Token (9 permissions) → Long-lived User Token → Page Token
 
-2. Ye permissions add karo:
+  Long-lived User Token = IG_ACCESS_TOKEN (Instagram ke liye)
+  Page Token = FB_PAGE_ACCESS_TOKEN (Facebook ke liye)
+```
+
+**Verify karo ke token mein Instagram permissions hain:**
+
+1. Browser mein ye URL paste karo:
+```
+https://graph.facebook.com/v25.0/debug_token?input_token={YOUR_IG_ACCESS_TOKEN}&access_token={YOUR_IG_ACCESS_TOKEN}
+```
+
+2. Response mein `scopes` check karo — ye permissions honi chahiye:
    - `instagram_basic`
    - `instagram_content_publish`
    - `instagram_manage_comments`
    - `instagram_manage_insights`
 
-3. **"Generate Access Token"** click karo — sab allow karo
-
-4. Ye **short-lived User Token** hai (1-2 hours) — isse copy karo
-
-5. **Naye browser tab** mein ye URL paste karo:
-
-```
-https://graph.facebook.com/v25.0/oauth/access_token?grant_type=fb_exchange_token&client_id={APP_ID}&client_secret={APP_SECRET}&fb_exchange_token={SHORT_LIVED_TOKEN}
-```
-
-6. **Replace karo:**
-   - `{APP_ID}` → Apna App ID
-   - `{APP_SECRET}` → App Secret
-   - `{SHORT_LIVED_TOKEN}` → Graph Explorer ka short-lived token
-
-7. **Enter** press karo
-
-8. Response:
-```json
-{
-  "access_token": "EAAxxxxxxx_BOHOT_LAMBA_TOKEN_xxxxxxx",
-  "token_type": "bearer",
-  "expires_in": 5184000
-}
-```
-
-9. `expires_in: 5184000` = **60 din**
-
-10. **Ye token copy karo** — ye tumhara **IG_ACCESS_TOKEN** hai
-
-11. `.env` file mein save karo:
-```env
-# Instagram — 60-day User Token (renew every 50 days)
-IG_ACCESS_TOKEN=EAAxxxxxxx_USER_TOKEN_xxxxxxx
-```
+3. Agar permissions missing hain → **Facebook Phase 6 pe wapis jao** aur saari 9 permissions ke saath naya token banao.
 
 **Token Renewal Reminder:**
 
-| Token | Expiry | Kab Renew Karein |
-|---|---|---|
-| **IG_ACCESS_TOKEN** | 60 days | Har 50 din mein (10 din pehle) |
+| Token | Expiry | Kab Renew Karein | Kaise Renew Karein |
+|---|---|---|---|
+| **IG_ACCESS_TOKEN** | 60 days | Har 50 din mein (10 din pehle) | Facebook Phase 6 ka poora process repeat karo (saari 9 permissions ke saath) |
+| **FB_PAGE_ACCESS_TOKEN** | Never expires | Jab IG token renew karo tab ye bhi naya banao | Facebook Phase 6 Step 4 se Page Token nikalo |
+
+> **Roman Urdu Note:**
+> Jab bhi Instagram token renew karo (har 50 din) — Facebook ka Page Token bhi dobara banao.
+> Kyunki dono ek hi parent token se aate hain — naya User Token = naya Page Token bhi chahiye.
 
 ---
 
@@ -2854,30 +2891,34 @@ ODOO_PASSWORD=your_password
 **2.3 Create Meta Developer Account**
 1. developers.facebook.com
 2. Create App → Business Type
-3. Add Products → Facebook Login
-4. Request permissions:
-   - pages_manage_posts
-   - pages_read_engagement
-   - pages_show_list
-   - instagram_basic
-   - instagram_content_publish
+3. Add Products → Facebook Login + Instagram
+4. Request permissions (ALL 9 together):
+   - pages_show_list, pages_read_engagement, pages_read_user_content
+   - pages_manage_posts, pages_manage_engagement
+   - instagram_basic, instagram_content_publish
+   - instagram_manage_comments, instagram_manage_insights
 
-**2.4 Get Non-Expiring Page Token**
+**2.4 Get Tokens (Facebook + Instagram from ONE token)**
+
+> **⚠️ CRITICAL:** Generate ONE token with ALL 9 permissions.
+> Do NOT generate Facebook and Instagram tokens separately — the second will invalidate the first!
+
 ```bash
 # Step 1: Get short-lived user token from Graph API Explorer
 # https://developers.facebook.com/tools/explorer/
-# Add permissions: pages_show_list, pages_read_engagement, pages_manage_posts, pages_manage_engagement
+# Add ALL 9 permissions (Facebook + Instagram together!)
 
 # Step 2: Exchange for long-lived user token (60 days)
+# This long-lived token = YOUR IG_ACCESS_TOKEN (Instagram ke liye)
 curl "https://graph.facebook.com/v25.0/oauth/access_token?\
 grant_type=fb_exchange_token&\
 client_id=YOUR_APP_ID&\
 client_secret=YOUR_APP_SECRET&\
 fb_exchange_token=YOUR_SHORT_LIVED_TOKEN"
 
-# Step 3: Get never-expiring Page token
+# Step 3: Get never-expiring Page token from the SAME long-lived token
+# This Page token = YOUR FB_PAGE_ACCESS_TOKEN (Facebook ke liye)
 # NOTE: Use YOUR_PAGE_ID (Business Portfolio ID), NOT me/accounts
-# (me/accounts returns empty for New Pages Experience)
 curl "https://graph.facebook.com/v25.0/YOUR_PAGE_ID?\
 fields=access_token&\
 access_token=YOUR_LONG_LIVED_USER_TOKEN"
@@ -3060,7 +3101,8 @@ EOF
 |-------|----------|
 | Odoo Docker won't start | Check Docker: `docker ps`. Check ports: `netstat -tlnp \| grep 8069` |
 | Odoo MCP connection refused | Verify ODOO_URL in .env. Check Docker: `docker compose ps` |
-| Facebook token expired | Page tokens from long-lived user tokens don't expire. Re-check generation steps |
+| Facebook token expired | Page tokens from long-lived user tokens don't expire. But if you generated a NEW User Token (e.g., for Instagram), the old Page Token's permissions get changed. Re-generate with ALL 9 permissions together (see Facebook Phase 6) |
+| Instagram token kills Facebook | Generating separate tokens invalidates the other. Always use ONE token with all 9 permissions (Facebook + Instagram). See Facebook Phase 6 |
 | Instagram "not Business/Creator" | Convert: Instagram Settings → Account → Switch to Professional |
 | Instagram 25-post limit | Wait 24 hours. Track in audit logs |
 | Ralph Wiggum infinite loop | Check max_iterations. Verify script is executable |
