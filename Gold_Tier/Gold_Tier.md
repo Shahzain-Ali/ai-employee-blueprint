@@ -2126,7 +2126,7 @@ Test each component before moving to next.
 3. **"+ Create New Page"** click karo
 
 4. **Page details fill karo:**
-   - **Page Name:** Jo bhi naam chahiye (e.g., "Agentive Solutions")
+   - **Page Name:** Jo bhi naam chahiye (e.g., "Education World")
    - **Category:** Jo tumhare content se match kare (e.g., "Science & Tech")
    - **Bio:** Short description likho (optional)
 
@@ -2138,7 +2138,7 @@ Test each component before moving to next.
 
 > **Roman Urdu Tip:**
 > Page ka naam professional rakho — ye tumhara business face hai.
-> "Agentive Solutions" jaisa naam accha hai — clear aur professional.
+> "Education World" jaisa naam accha hai — clear aur professional.
 
 ---
 
@@ -2221,7 +2221,7 @@ Test each component before moving to next.
 1. Left side mein **"Accounts"** → **"Pages"** click karo
 2. Agar Page nahi dikh raha toh **"+ Add"** click karo
 3. **"Add an existing Facebook Page"** select karo (pehla option)
-4. Apna Page search karo (e.g., "Agentive Solutions")
+4. Apna Page search karo (e.g., "Education World")
 5. Page select karo → **"Next"** click karo
 6. Agar Instagram connected hai toh Instagram login popup aayega — login karo
    - **Agar "Invalid redirect URI" error aaye** toh pehle ye karo:
@@ -2241,7 +2241,7 @@ Test each component before moving to next.
 **Part D: Page Ko App Se Connect Karna**
 
 1. Left side mein **"Pages"** click karo
-2. Apna **Page** select karo (e.g., "Agentive Solutions")
+2. Apna **Page** select karo (e.g., "Education World")
 3. **"Connected assets"** tab pe jao
 4. **"Connect assets"** click karo
 5. Apna App select karo (e.g., "FTE Social Manager")
@@ -2559,7 +2559,7 @@ The `fte-facebook` MCP server exposes 5 tools:
 
 1. **Facebook** open karo desktop pe
 
-2. Apna **Facebook Page** pe jao (e.g., "Agentive Solutions")
+2. Apna **Facebook Page** pe jao (e.g., "Education World")
 
 3. **Page Settings** mein jao
 
@@ -2674,7 +2674,7 @@ The `fte-facebook` MCP server exposes 5 tools:
 1. Browser mein jao: **business.facebook.com/settings/**
 2. **"Select business"** page khulega — agar multiple Business Portfolios hain toh wo wala select karo jismein tumhare Pages hain (e.g., jo "2 Pages" dikhaye)
 3. Business Settings khulne ke baad, left side mein **"Pages"** click karo
-4. Apna Page dikhega (e.g., "Agentive Solutions") — Page ke saath **numeric Page ID** dikhegi
+4. Apna Page dikhega (e.g., "Education World") — Page ke saath **numeric Page ID** dikhegi
 5. **Ye ID copy karo** — yehi API ke liye use hogi
 
 > **⚠️ NOTE:** `me/accounts` Graph API Explorer mein try mat karo — New Pages Experience mein ye empty `{"data": []}` return karta hai. Business Settings se Page ID nikalna sabse reliable tareeqa hai.
@@ -2878,7 +2878,7 @@ ODOO_PASSWORD=your_password
 
 **2.1 Create Facebook Business Page**
 1. facebook.com → Create → Page
-2. Name: "Agentive Solutions"
+2. Name: "Education World"
 3. Note Page ID
 
 **2.2 Convert Instagram to Business/Creator**
