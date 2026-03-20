@@ -1,28 +1,51 @@
 # Gmail API — Complete Setup Guide
 
 **Date:** 2026-03-20
-**Author:** Shahzain Bangash + Claude Opus 4.6
+**Author:** Shahzain Ali + Claude Opus 4.6
 **Status:** FULLY WORKING — Read, Send, Modify Emails via Gmail API
 
 ---
 
 ## Table of Contents
 
-1. [Prerequisites](#1-prerequisites)
-2. [Token Type — Quick Summary](#2-token-type--quick-summary)
-3. [Google Cloud Project Create Karna](#3-google-cloud-project-create-karna)
-4. [Gmail API Enable Karna](#4-gmail-api-enable-karna)
-5. [OAuth Consent Screen Configure Karna](#5-oauth-consent-screen-configure-karna)
-6. [OAuth Client Credentials Create Karna](#6-oauth-client-credentials-create-karna)
-7. [First-Time Authorization (Token Generate Karna)](#7-first-time-authorization-token-generate-karna)
-8. [Verify Token Working Hai](#8-verify-token-working-hai)
-9. [Test Email Send Karna](#9-test-email-send-karna)
-10. [Token Lifecycle — Auto-Refresh Kaise Kaam Karta Hai](#10-token-lifecycle--auto-refresh-kaise-kaam-karta-hai)
-11. [.env Configuration](#11-env-configuration)
-12. [What You Can Do — Email Operations](#12-what-you-can-do--email-operations)
-13. [API Scopes Quick Reference](#13-api-scopes-quick-reference)
-14. [Troubleshooting](#14-troubleshooting)
-15. [Checklist — Setup Complete?](#15-checklist--setup-complete)
+- [Gmail API — Complete Setup Guide](#gmail-api--complete-setup-guide)
+  - [Table of Contents](#table-of-contents)
+  - [1. Prerequisites](#1-prerequisites)
+  - [2. Token Type — Quick Summary](#2-token-type--quick-summary)
+  - [3. Google Cloud Project Create Karna](#3-google-cloud-project-create-karna)
+  - [4. Gmail API Enable Karna](#4-gmail-api-enable-karna)
+  - [5. OAuth Consent Screen Configure Karna](#5-oauth-consent-screen-configure-karna)
+    - [5.1 — Screen Create Karo](#51--screen-create-karo)
+    - [5.2 — Details Fill Karo](#52--details-fill-karo)
+    - [5.3 — Scopes Add Karo](#53--scopes-add-karo)
+    - [5.4 — Test Users Add Karo](#54--test-users-add-karo)
+  - [6. OAuth Client Credentials Create Karna](#6-oauth-client-credentials-create-karna)
+    - [Credentials Download Karo:](#credentials-download-karo)
+  - [7. First-Time Authorization (Token Generate Karna)](#7-first-time-authorization-token-generate-karna)
+    - [Step 1: Install Library](#step-1-install-library)
+    - [Step 2: Script Banao](#step-2-script-banao)
+    - [Step 3: Run Karo](#step-3-run-karo)
+    - [Alternative: Via FTE Command (Agar hamara project use kar rahe ho)](#alternative-via-fte-command-agar-hamara-project-use-kar-rahe-ho)
+    - [Method C: Manual Code Exchange (Agar MismatchingStateError Aaye)](#method-c-manual-code-exchange-agar-mismatchingstateerror-aaye)
+  - [8. Done — Kya Mila?](#8-done--kya-mila)
+    - [Via MCP Tool (Claude Code):](#via-mcp-tool-claude-code)
+  - [10. Token Lifecycle — Auto-Refresh Kaise Kaam Karta Hai](#10-token-lifecycle--auto-refresh-kaise-kaam-karta-hai)
+  - [11. .env Configuration](#11-env-configuration)
+    - [Files in `.secrets/`:](#files-in-secrets)
+  - [12. What You Can Do — Email Operations](#12-what-you-can-do--email-operations)
+    - [Email Flow in FTE System:](#email-flow-in-fte-system)
+  - [13. API Scopes Quick Reference](#13-api-scopes-quick-reference)
+  - [14. Troubleshooting](#14-troubleshooting)
+    - [Token Errors](#token-errors)
+    - [Permission Errors](#permission-errors)
+    - [Setup Errors](#setup-errors)
+  - [15. Checklist — Setup Complete?](#15-checklist--setup-complete)
+    - [Google Cloud Setup](#google-cloud-setup)
+    - [Credentials](#credentials)
+    - [Authorization](#authorization)
+    - [Testing](#testing)
+    - [Configuration](#configuration)
+    - [No Manual Renewal Needed!](#no-manual-renewal-needed)
 
 ---
 
