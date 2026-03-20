@@ -1,7 +1,7 @@
 # Gmail API — Complete Setup Guide
 
 **Date:** 2026-03-20
-**Author:** Shahzain Ali + Claude Opus 4.6
+**Author:** Shahzain Bangash + Claude Opus 4.6
 **Status:** FULLY WORKING — Read, Send, Modify Emails via Gmail API
 
 ---
@@ -22,8 +22,10 @@
   - [6. OAuth Client Credentials Create Karna](#6-oauth-client-credentials-create-karna)
     - [Credentials Download Karo:](#credentials-download-karo)
   - [7. First-Time Authorization (Token Generate Karna)](#7-first-time-authorization-token-generate-karna)
-    - [Method A: Via FTE Command (Recommended)](#method-a-via-fte-command-recommended)
-    - [Method B: Manual (WSL/Headless Server — Browser Auto-Open Na Ho)](#method-b-manual-wslheadless-server--browser-auto-open-na-ho)
+    - [Step 1: Install Library](#step-1-install-library)
+    - [Step 2: Script Banao](#step-2-script-banao)
+    - [Step 3: Run Karo](#step-3-run-karo)
+    - [Alternative: Via FTE Command (Agar hamara project use kar rahe ho)](#alternative-via-fte-command-agar-hamara-project-use-kar-rahe-ho)
     - [Method C: Manual Code Exchange (Agar MismatchingStateError Aaye)](#method-c-manual-code-exchange-agar-mismatchingstateerror-aaye)
   - [8. Verify Token Working Hai](#8-verify-token-working-hai)
     - [Expected Output:](#expected-output)
@@ -79,17 +81,12 @@ Ye sab **pehle se ready** hona chahiye — is video mein ye nahi banayenge:
 
 ## 2. Token Type — Quick Summary
 
-Gmail ke tokens **dusre platforms se different** hain:
+Gmail ka token **ek baar setup karo.** System khud refresh karta hai, manually kuch karna nahi padta.
 
-| Token Type | Expiry | Renewal |
-|------------|--------|---------|
-| **Access Token** | ~1 hour | **Auto-refresh** (khud renew hota hai) |
-| **Refresh Token** | Long-lived (months/years) | Tab tak valid jab tak user revoke na kare |
-
-**Key Points:**
-- Gmail mein **manual token renewal ki zaroorat nahi** — system khud refresh karta hai
-- Ek baar setup karo (Step 7) → phir bhool jao
-- Sirf tab dobara setup karna padta hai jab: password change karo, permissions revoke karo, ya refresh token expire ho
+**Sirf tab dobara setup (Step 7) karna padta hai jab:**
+- Google account ka password change karo
+- Google account se permissions revoke karo
+- `token.json` file delete ho jaye
 - Credentials file (`.secrets/gmail_credentials.json`) + Token file (`.secrets/gmail_token.json`) — dono chahiye
 
 ---
@@ -215,47 +212,78 @@ your-project/.secrets/gmail_credentials.json
 ## 7. First-Time Authorization (Token Generate Karna)
 
 > Ye step sirf **ek baar** karna hai. Baad mein token auto-refresh hoga.
+>
+> **Credentials vs Token ka fark:**
+> - `credentials.json` = App ka ID card (Google ko pata chale ye kaun hai)
+> - `token.json` = User ki permission (Google ko pata chale ke USER ne allow kiya hai)
+>
+> Sirf credentials download karna kaafi nahi — **user ki permission (token) bhi chahiye.**
 
 **Time:** 2 minutes
 
-### Method A: Via FTE Command (Recommended)
+### Step 1: Install Library
+
+```bash
+pip install google-auth-oauthlib
+```
+
+### Step 2: Script Banao
+
+`gmail_token_setup.py` naam se file banao:
+
+```python
+# gmail_token_setup.py
+# Gmail API Token Generate Karne Ki Script
+# Ek baar run karo — token auto-save ho jayega
+
+from google_auth_oauthlib.flow import InstalledAppFlow
+
+SCOPES = [
+    "https://www.googleapis.com/auth/gmail.readonly",
+    "https://www.googleapis.com/auth/gmail.modify",
+    "https://www.googleapis.com/auth/gmail.send",
+]
+
+flow = InstalledAppFlow.from_client_secrets_file(
+    "credentials.json",  # Google Cloud se download ki hui file (Step 6)
+    SCOPES,
+)
+
+creds = flow.run_local_server(port=0)
+
+# Token save karo
+with open("token.json", "w") as f:
+    f.write(creds.to_json())
+
+print("Token saved to token.json!")
+```
+
+### Step 3: Run Karo
+
+```bash
+python gmail_token_setup.py
+```
+
+> **Note:** `credentials.json` (Step 6 mein download ki hui) same folder mein honi chahiye jahan script hai.
+
+**Kya hoga:**
+1. Browser **automatically** open hoga
+2. Google account select karo
+3. **"Allow"** pe click karo — sab permissions accept karo
+4. Browser mein dikhega: **"The authentication flow has completed."**
+5. Token automatically **`token.json`** mein save ho jayega
+
+**Result:** `token.json` ban gaya — ab is token se emails read, send, sab kar sakte ho ✅
+
+> **Ye script generic hai** — koi bhi apne project mein use kar sakta hai. AI agent, chatbot, automation — jahan bhi Gmail API chahiye.
+
+### Alternative: Via FTE Command (Agar hamara project use kar rahe ho)
 
 ```bash
 uv run python -m src.main gmail --authorize
 ```
 
-**Kya hoga:**
-1. Browser automatically open hoga
-2. Google account select karo
-3. "Allow" pe click karo — sab permissions accept karo
-4. Browser mein dikhega: **"The authentication flow has completed."**
-5. Token automatically `.secrets/gmail_token.json` mein save ho jayega
-
-### Method B: Manual (WSL/Headless Server — Browser Auto-Open Na Ho)
-
-```bash
-uv run python -c "
-from dotenv import load_dotenv; load_dotenv('.env')
-import os
-from pathlib import Path
-from google_auth_oauthlib.flow import InstalledAppFlow
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly','https://www.googleapis.com/auth/gmail.modify','https://www.googleapis.com/auth/gmail.send']
-creds_path = os.getenv('GMAIL_CREDENTIALS_PATH', '.secrets/gmail_credentials.json')
-token_path = os.getenv('GMAIL_TOKEN_PATH', '.secrets/gmail_token.json')
-flow = InstalledAppFlow.from_client_secrets_file(creds_path, SCOPES)
-print('Open http://localhost:8090 in browser')
-creds = flow.run_local_server(port=8090, open_browser=False, prompt='consent')
-token_file = Path(token_path)
-token_file.parent.mkdir(parents=True, exist_ok=True)
-token_file.write_text(creds.to_json(), encoding='utf-8')
-print('SUCCESS: Token saved!')
-"
-```
-
-1. Terminal mein command run karo
-2. Browser mein open karo: **http://localhost:8090**
-3. Google login karo aur permissions allow karo
-4. **"Authentication flow completed"** — token saved!
+Ye same kaam karta hai lekin project ke `.secrets/` folder mein token save karta hai.
 
 ### Method C: Manual Code Exchange (Agar MismatchingStateError Aaye)
 
