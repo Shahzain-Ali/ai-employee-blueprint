@@ -1,24 +1,41 @@
 # Gmail API — Complete Setup Guide
 
 **Date:** 2026-03-20
-**Author:** Shahzain Bangash + Claude Opus 4.6
+**Author:** Shahzain Ali + Claude Opus 4.6
 **Status:** FULLY WORKING — Read, Send, Modify Emails via Gmail API
 
 ---
 
 ## Table of Contents
 
-1. [Prerequisites](#1-prerequisites)
-2. [Token Type — Quick Summary](#2-token-type--quick-summary)
-3. [Google Cloud Project Create Karna](#3-google-cloud-project-create-karna)
-4. [Gmail API Enable Karna](#4-gmail-api-enable-karna)
-5. [OAuth Consent Screen Configure Karna](#5-oauth-consent-screen-configure-karna)
-6. [OAuth Client Credentials Create Karna](#6-oauth-client-credentials-create-karna)
-7. [First-Time Authorization (Token Generate Karna)](#7-first-time-authorization-token-generate-karna)
-8. [Done — Kya Mila?](#8-done--kya-mila)
-9. [.env Configuration](#9-env-configuration)
-10. [Troubleshooting](#10-troubleshooting)
-11. [Checklist — Setup Complete?](#11-checklist--setup-complete)
+- [Gmail API — Complete Setup Guide](#gmail-api--complete-setup-guide)
+  - [Table of Contents](#table-of-contents)
+  - [1. Prerequisites](#1-prerequisites)
+  - [2. Token Type — Quick Summary](#2-token-type--quick-summary)
+  - [3. Google Cloud Project Create Karna](#3-google-cloud-project-create-karna)
+  - [4. Gmail API Enable Karna](#4-gmail-api-enable-karna)
+  - [5. OAuth Consent Screen Configure Karna](#5-oauth-consent-screen-configure-karna)
+    - [5.1 — Screen Create Karo](#51--screen-create-karo)
+    - [5.2 — Details Fill Karo](#52--details-fill-karo)
+    - [5.3 — Scopes Add Karo](#53--scopes-add-karo)
+    - [5.4 — Test Users Add Karo](#54--test-users-add-karo)
+  - [6. OAuth Client Credentials Create Karna](#6-oauth-client-credentials-create-karna)
+    - [Credentials Download Karo:](#credentials-download-karo)
+  - [7. First-Time Authorization (Token Generate Karna)](#7-first-time-authorization-token-generate-karna)
+    - [Step 1: Install Library](#step-1-install-library)
+    - [Step 2: Script Banao](#step-2-script-banao)
+    - [Step 3: Run Karo](#step-3-run-karo)
+    - [Alternative: Via FTE Command (Agar hamara project use kar rahe ho)](#alternative-via-fte-command-agar-hamara-project-use-kar-rahe-ho)
+    - [Method C: Manual Code Exchange (Agar MismatchingStateError Aaye)](#method-c-manual-code-exchange-agar-mismatchingstateerror-aaye)
+  - [8. Done — Kya Mila?](#8-done--kya-mila)
+    - [Via MCP Tool (Claude Code):](#via-mcp-tool-claude-code)
+  - [9. .env Configuration](#9-env-configuration)
+    - [Files in `.secrets/`:](#files-in-secrets)
+  - [10. Troubleshooting](#10-troubleshooting)
+    - [Token Errors](#token-errors)
+    - [Permission Errors](#permission-errors)
+    - [Setup Errors](#setup-errors)
+  - [11. Checklist — Setup Complete?](#11-checklist--setup-complete)
 
 ---
 
