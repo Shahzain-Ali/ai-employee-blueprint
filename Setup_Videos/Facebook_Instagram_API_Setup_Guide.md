@@ -551,12 +551,33 @@ https://graph.facebook.com/v21.0/oauth/access_token?grant_type=fb_exchange_token
 
 Browser mein ye URL open karo:
 ```
-https://graph.facebook.com/v21.0/debug_token?input_token={YOUR_TOKEN}&access_token={YOUR_TOKEN}
+https://graph.facebook.com/v25.0/{YOUR_PAGE_ID}?fields=access_token&access_token={LONG_LIVED_USER_TOKEN}
+```
+2. **Replace karo:**
+
+| Placeholder | Kya Daalna Hai |
+|-------------|---------------|
+| `{YOUR_PAGE_ID}` | Tumhara App ID (App Settings → Basic se) |
+| `{LONG_LIVED_USER_TOKEN}` | App Secret (Step 1 se) |
+
+3. **Enter** press karo
+
+4. Response mein jo `access_token` aaye — ye **never-expiring Page Token** hai
+
+```json
+{
+  "access_token": "EAAxxxxxxx_PAGE_TOKEN_xxxxxxx",
+  "id": "1044367502088758"
+}
 ```
 
-Response mein check karo:
-- `expires_at: 0` → **Never-expiring** ✅
-- `expires_at: 1234567890` → Expiry date hai, long-lived User Token hai
+5. **Ye token copy karo** — ye tumhara **FB_PAGE_ACCESS_TOKEN** hai
+
+6. `.env` file mein save karo:
+```env
+# Facebook — Never-expiring Page Token
+FB_PAGE_ACCESS_TOKEN=EAAxxxxxxx_PAGE_TOKEN_xxxxxxx
+```
 
 ---
 
